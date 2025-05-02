@@ -7,11 +7,14 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [wooText, setWooText] = useState('');
   const [umText, setUmText] = useState('');
-  const [wooTextSize, setWooTextSize] = useState(1);  // 텍스트 크기 상태
-  const [umTextSize, setUmTextSize] = useState(1);  // 텍스트 크기 상태
+  const [wooTextSize, setWooTextSize] = useState(1);
+  const [umTextSize, setUmTextSize] = useState(1);
+  const [wooAnimate, setWooAnimate] = useState(false);
+  const [umAnimate, setUmAnimate] = useState(false);
 
   const totalClicks = wooScore + umScore;
   const maxScore = 30;
+  const MAX_TEXT_SIZE = 3;
 
   const winner =
     wooScore === umScore
@@ -30,7 +33,9 @@ function App() {
     if (!gameOver) {
       setWooScore(prev => prev + 1);
       setWooText('양우혁이 양양양 운다🎉');
-      setWooTextSize(prevSize => prevSize + 0.1);  // 버튼 클릭 시 텍스트 크기 증가
+      setWooTextSize(prevSize => Math.min(prevSize + 0.1, MAX_TEXT_SIZE));
+      setWooAnimate(true);
+      setTimeout(() => setWooAnimate(false), 200);
     }
   };
 
@@ -38,7 +43,9 @@ function App() {
     if (!gameOver) {
       setUmScore(prev => prev + 1);
       setUmText('엄수민이 엄엄엄 운다🎉');
-      setUmTextSize(prevSize => prevSize + 0.1);  // 버튼 클릭 시 텍스트 크기 증가
+      setUmTextSize(prevSize => Math.min(prevSize + 0.1, MAX_TEXT_SIZE));
+      setUmAnimate(true);
+      setTimeout(() => setUmAnimate(false), 200);
     }
   };
 
@@ -48,8 +55,10 @@ function App() {
     setGameOver(false);
     setWooText('');
     setUmText('');
-    setWooTextSize(1);  // 크기 초기화
-    setUmTextSize(1);   // 크기 초기화
+    setWooTextSize(1);
+    setUmTextSize(1);
+    setWooAnimate(false);
+    setUmAnimate(false);
   };
 
   const backgroundColor =
@@ -64,14 +73,20 @@ function App() {
           <div className="player">
             <h2>🐑 양우혁</h2>
             <p>{wooScore}점</p>
-            <p
-              className="text"
-              style={{ fontSize: `${wooTextSize}rem` }} // 텍스트 크기 조절
+            {!gameOver && (
+              <p
+                className={`text ${wooAnimate ? 'enlarged' : ''}`}
+                style={{ fontSize: `${wooTextSize}rem` }}
+              >
+                {wooText}
+              </p>
+            )}
+            <img src={`${process.env.PUBLIC_URL}/woo.png`} alt="양우혁" className="emoji" />
+            <button
+              onClick={handleWooClick}
+              className="effect-button"
+              disabled={gameOver}
             >
-              {wooText}
-            </p>
-            <img src="/woo.png" alt="양우혁" className="emoji" />
-            <button onClick={handleWooClick} className="effect-button">
               울려!
             </button>
           </div>
@@ -79,14 +94,20 @@ function App() {
           <div className="player">
             <h2>🐻 엄수민</h2>
             <p>{umScore}점</p>
-            <p
-              className="text"
-              style={{ fontSize: `${umTextSize}rem` }} // 텍스트 크기 조절
+            {!gameOver && (
+              <p
+                className={`text ${umAnimate ? 'enlarged' : ''}`}
+                style={{ fontSize: `${umTextSize}rem` }}
+              >
+                {umText}
+              </p>
+            )}
+            <img src={`${process.env.PUBLIC_URL}/um.png`} alt="엄수민" className="emoji" />
+            <button
+              onClick={handleUmClick}
+              className="effect-button"
+              disabled={gameOver}
             >
-              {umText}
-            </p>
-            <img src="/um.png" alt="엄수민" className="emoji" />
-            <button onClick={handleUmClick} className="effect-button">
               울려!
             </button>
           </div>
